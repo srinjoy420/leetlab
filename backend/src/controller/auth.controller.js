@@ -8,7 +8,7 @@ import {UserRole} from '../generated/prisma/index.js'
 dotenv.config();
 
 export const register= async(req,res)=>{
-    const {email,password,name}=req.body;
+    const {email,password,name,role}=req.body;
     if(!email || !password || !name){
         return res.status(400).json({
             message:"All fields are required"
@@ -29,7 +29,7 @@ export const register= async(req,res)=>{
                 email,
                 password:hashedPassword,
                 name,
-                role:UserRole.USER
+                role:role||UserRole.USER
                 
             }
         })

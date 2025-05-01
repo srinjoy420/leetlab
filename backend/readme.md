@@ -43,4 +43,5 @@ complete setup your judge 0
 
 ///////chapter 2 Problem managemnt
 create a judge.libs.js in libs
+npx prisma studio for check the database
 

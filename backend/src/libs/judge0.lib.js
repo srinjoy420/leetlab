@@ -7,7 +7,7 @@ export const getJudge0LanguageId=(Language) => {
         "JAVA":62,
         "JAVASCRIPT":63
     }
-    return languageMap[Language.uppercase()]
+    return languageMap[Language.toUpperCase()]
 
     
 }
@@ -21,6 +21,8 @@ export const pollBatchResults=async(tokens)=>{
             }
         })
         const results=data.submissions
+        // console.log(results);
+        
         //if all true thwn return true
         const isAllDone=results.every(
             (r)=>r.status.id !==1 && r.status.id !==2
