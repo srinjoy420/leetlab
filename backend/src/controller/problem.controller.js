@@ -102,23 +102,23 @@ export const getAllProblems = async (req, res) => {
     }
 }
 export const getProblembyId = async (req, res) => {
-    const {id}=req.params;
+    const { id } = req.params;
     try {
-        
-        const problem=await db.problem.findUnique({
-            where:{
-                id:id
+
+        const problem = await db.problem.findUnique({
+            where: {
+                id: id
 
             }
         })
-        if(!problem){
+        if (!problem) {
             return res.status(400).json({
-                error:"problem not found"
+                error: "problem not found"
             })
         }
         res.status(200).json({
-            sucess :true,
-            message:"problem fetched succesfully",
+            sucess: true,
+            message: "problem fetched succesfully",
             problem
         })
     } catch (error) {
@@ -126,15 +126,44 @@ export const getProblembyId = async (req, res) => {
         return res.status(404).json({
             error: "some error occured while getting problem by id",
         })
-        
-        
+
+
     }
 }
 export const updateProblem = async (req, res) => {
     res.send("update problem")
 }
 export const Deleteproblem = async (req, res) => {
-    res.send("delete problem")
+    const { id } = req.params;
+    try {
+        const problem = await db.problem.findUnique({
+            where: { id: id }
+        })
+        if (!problem) {
+            return res.status(400).json({
+                error: "problem not found"
+            })
+        }
+        await db.problem.delete({
+            where: {
+                id
+            }
+        })
+        res.status(200).json({
+            sucess: true,
+            message: "problem deleted successfully",
+           
+
+        })
+
+    } catch (error) {
+        console.log("error in deleting problem", error);
+        return res.status(400).json({
+            error: "some error occured while deleting problem",
+        })
+        
+
+    }
 }
 export const getAllProblemssolvedbyUser = async (req, res) => {
     res.send("get all problems solved by user")
