@@ -1,6 +1,13 @@
 import express from 'express';
-const constexecutionRoute = express.Router();
+import {authMidleware} from "../middleware/auth.middleware.js"
+import {executeCode} from "../controller/execute.controller.js"
+
+const executionRoute = express.Router();
+
 
 // Define your routes here...
+executionRoute.post("/",authMidleware,executeCode)
 
-export default constexecutionRoute;
+
+
+export default executionRoute;
