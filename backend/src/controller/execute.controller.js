@@ -67,16 +67,78 @@ export const executeCode = async (req, res) => {
                 stdout: JSON.stringify(detailresults.map((r) => r.stdout)),
                 stderr: detailresults.some((r) => r.stderr)
                     ? JSON.stringify(detailresults.map((r) => r.stderr))
-                    : null
+                    : null,
+                compileOutput: detailresults.some((r) => r.compile_output)
+                    ? JSON.stringify(detailresults.map((r) => r.compile_output))
+                    : null,
+                status: allPassed ? "Acceped" : "wrong",
+                memory: detailresults.some((r) => r.memory)
+                    ? JSON.stringify(detailresults.map((r) => r.memory))
+                    : null,
+                time: detailresults.some((r) => r.time)
+                    ? JSON.stringify(detailresults.map((r) => r.time))
+                    : null,
 
 
-            }
-        })
+
+
+            },
+        });
+        //if all passed= true mark problem as solved for the user
+        if(allPassed){
+            await db.problemSolved.upsert({
+                where:{
+                    userId_problemId:{
+                        userId,problemId
+                    }
+                },
+                update:{},
+                create:{
+                    userId,problemId
+                }
+
+            })
+        }
+        //individualtest case results using detailedresult
+       const testCaseResults=detailresults.map((result)=>({
+        submissionId:submission.id,
+        testCase:result.testCase,
+        expected:result.expected,
+        passed:result.passed,
+        stdout:result.stdout,
+        stderr:result.stderr,
+        compileOutput:result.compile_output,
+        status:result.status,
+        memory:result.memory,
+        time:result.time
+        
+
+
+       }))
+
+       await db.testCaseResult.createMany({
+        data:testCaseResults
+       })
+
+       const submissionwithtestCase=await db.submission.findUnique({
+        where:{
+            id:submission.id
+        },
+        include:{
+            testCases:true
+        }
+
+       })
+
+
+
 
         res.status(200).json({
+
             sucess: true,
             message: "code executed successfully",
-            results
+            results,
+            submission:submissionwithtestCase
         })
 
 

@@ -50,6 +50,6 @@ export function getLanguageName(languageId){
         "JAVA":62,
         "JAVASCRIPT":63
     }
-    return LANGUAGE_NAMES(languageId) || "unknown"
+    return LANGUAGE_NAMES[languageId] || "unknown"
 
 }
