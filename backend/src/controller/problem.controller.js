@@ -10,7 +10,7 @@ export const createProblem = async (req, res) => {
             error: "user not authorised to create problem you are not admin"
         })
     }
-    try {
+    try {//it becames array of key and value paires language and corrosponding solution code
         for (const [language, solutionCode] of Object.entries(referenceSolutions)) {
             //get judge0 language id for the current language
             const languageId = getJudge0LanguageId(language);
@@ -20,63 +20,70 @@ export const createProblem = async (req, res) => {
                     message: "invalid language"
                 })
             }
-            //proper judge0 submission for all the testcases
-            const submission = testcases.map(({ input, output }) => ({
-                source_code: solutionCode,
-                language_id: languageId,
-                stdin: input,
-                expected_output: output
-            }))
-            const submissionresults = await submitBatch(submission)
-            const tokens = submissionresults.map((res) => res.token)
-            //submission all the testcases
-            const results = await pollBatchResults(tokens)
-            for (let i = 0; i < results.length; i++) {
+            //proper judge0 submission for all the testcases it return
+            //  {
+        //     source_code: "a + b",       // example solutionCode
+        //         language_id: 63,            // JavaScript
+        //             stdin: "2 3",
+        //                 expected_output: "5"
+        // },
+
+        const submission = testcases.map(({ input, output }) => ({
+            source_code: solutionCode,
+            language_id: languageId,
+            stdin: input,
+            expected_output: output
+        }))
+        const submissionresults = await submitBatch(submission)
+        const tokens = submissionresults.map((res) => res.token)
+        //submission all the testcases
+        const results = await pollBatchResults(tokens)
+        for (let i = 0; i < results.length; i++) {
 
 
-                const result = results[i];
-                console.log("results", result);
-                if (result.status.id !== 3) {
-                    return res.status(400).json({
-                        error: `testcase ${i + 1} failed for language ${language}`
-                    })
-                }
+            const result = results[i];
+            console.log("results", result);
+            if (result.status.id !== 3) {
+                return res.status(400).json({
+                    error: `testcase ${i + 1} failed for language ${language}`
+                })
             }
-            //save the problem to the database
-           
-
-           
-
-
         }
-        const newProblem = await db.problem.create({
-            data: {
-                title,
-                description,
-                difficulty,
-                tags,
-                examples,
-                constraints,
-                testcases,
-                codeSnippets,
-                referenceSolutions,
-                userId: req.user.id
+        //save the problem to the database
 
-            }
-        })
-        return res.status(201).json({
-            sucess: true,
-            message: "problem Created Successfully",
-            problem: newProblem,
-        })
-    } catch (error) {
-        console.log("error in creating problem", error);
 
-        return res.status(400).json({
-            message: "some error occured while creating problem",
-        })
+
+
 
     }
+        const newProblem = await db.problem.create({
+        data: {
+            title,
+            description,
+            difficulty,
+            tags,
+            examples,
+            constraints,
+            testcases,
+            codeSnippets,
+            referenceSolutions,
+            userId: req.user.id
+
+        }
+    })
+    return res.status(201).json({
+        sucess: true,
+        message: "problem Created Successfully",
+        problem: newProblem,
+    })
+} catch (error) {
+    console.log("error in creating problem", error);
+
+    return res.status(400).json({
+        message: "some error occured while creating problem",
+    })
+
+}
 
 }
 export const getAllProblems = async (req, res) => {
@@ -135,14 +142,14 @@ export const getProblembyId = async (req, res) => {
 export const updateProblem = async (req, res) => {
     const { id } = req.params;
     try {
-        const problem=await db.problem.findUnique({
-            where:{
-                id:id
+        const problem = await db.problem.findUnique({
+            where: {
+                id: id
             }
         })
-        if(!problem){
+        if (!problem) {
             return res.status(400).json({
-                error:"problem not found"
+                error: "problem not found"
             })
         }
         const { title, description, difficulty, tags, examples, constraints, testcases, codeSnippets, referenceSolutions } = req.body;
@@ -178,15 +185,15 @@ export const updateProblem = async (req, res) => {
                 }
             }
             //save the problem to the database
-           
 
-           
+
+
 
 
         }
         const updateProblem = await db.problem.update({
-            where:{
-                id:id
+            where: {
+                id: id
             },
             data: {
                 title,
@@ -214,7 +221,7 @@ export const updateProblem = async (req, res) => {
         return res.status(400).json({
             message: "some error occured while updating problem",
         })
-        
+
     }
 }
 export const Deleteproblem = async (req, res) => {
@@ -236,7 +243,7 @@ export const Deleteproblem = async (req, res) => {
         res.status(200).json({
             sucess: true,
             message: "problem deleted successfully",
-           
+
 
         })
 
@@ -245,7 +252,7 @@ export const Deleteproblem = async (req, res) => {
         return res.status(400).json({
             error: "some error occured while deleting problem",
         })
-        
+
 
     }
 }

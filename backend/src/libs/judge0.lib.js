@@ -1,6 +1,7 @@
 import axios from "axios"
 import dotenv from "dotenv";
 dotenv.config();
+//It takes a programming language name (like "Python" or "javaScript") and returns the corresponding Judge0 language ID
 export const getJudge0LanguageId=(Language) => {
     const languageMap={
         "PYTHON":71,
@@ -33,6 +34,7 @@ export const pollBatchResults=async(tokens)=>{
     
 }
 // hit judge0 api submisson
+//This function sends multiple code submissions to the Judge0 API — one for each test case — and gets back tokens (tracking IDs) for each.
 export const submitBatch=async(submissions)=>{
     const {data}=await axios.post(`${process.env.JUDGE0_API_URL}/submissions/batch?base64_encoded=false`,{
         submissions
