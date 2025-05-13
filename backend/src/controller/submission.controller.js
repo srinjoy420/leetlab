@@ -21,7 +21,7 @@ export const getallSubmission=async(req,res)=>{
         submissions
     })
    } catch (error) {
-    console.log("error to get");
+    console.log("error to get",error);
      res.status(400).json({
         message:"cant get id succesfully",
         success:false
