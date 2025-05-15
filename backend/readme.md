@@ -45,3 +45,5 @@ complete setup your judge 0
 create a judge.libs.js in libs
 npx prisma studio for check the database
 
+//////frontend
+dasiy ui install react using vite
