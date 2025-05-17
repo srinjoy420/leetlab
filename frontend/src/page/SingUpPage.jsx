@@ -12,15 +12,17 @@ import {
   Mail
 } from 'lucide-react';
 import AuthImagePattern from '../components/AuthImagePattern';
+import { useAuthStore } from '../store/useAuthStore';
 
 const SingUpschema = z.object({
   email: z.string().email("Enter a valid email"),
-  password: z.string().min(6, "password atleast six digits "),
+  password: z.string().min(4, "password atleast six digits "),
   name: z.string().min(3, "Name must be three digits long")
 })
 
 const SingUpPage = () => {
   const [showPassword, setShowPassword] = useState(false)
+  const { signup, issinginUp } = useAuthStore()
 
   const {
     register,
@@ -31,7 +33,18 @@ const SingUpPage = () => {
   })
 
   const onSubmit = async (data) => {
-    console.log(data);
+    // console.log(data);
+    try {
+      await signup(data);
+      console.log("singingup data", data);
+
+
+
+    } catch (error) {
+      console.log("error in singiup data", error);
+
+
+    }
   }
 
   return (
@@ -107,6 +120,7 @@ const SingUpPage = () => {
                   className={`input input-bordered w-full pl-10 ${errors.password ? "input-error" : ""}`}
                   placeholder="••••••••"
                 />
+
                 <button
                   type="button"
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
@@ -128,8 +142,16 @@ const SingUpPage = () => {
             <button
               type="submit"
               className="btn btn-primary w-full"
+              disabled={issinginUp}
             >
-              Sign Up
+              {issinginUp ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Loading...
+                </>
+              ) : (
+                "Sign in"
+              )}
             </button>
           </form>
 
