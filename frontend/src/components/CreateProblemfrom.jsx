@@ -561,7 +561,26 @@ const CreateProblemfrom = () => {
     });
     const [isLoading, setLoading] = useState(false);
     const onSubmit = async (value) => {
-        console.log(value);
+        // console.log(value);
+        try {
+           setLoading(true)
+           const res=await axiosInstance.post("/problem/create-problem",value);
+           console.log(res.data);
+           
+           toast.success(res.data.message || "problem created succesfully");
+           navigation("/");
+
+            
+        } catch (error) {
+            console.log("problem in creating problem",error);
+            toast.error("error creating problem")
+            
+            
+        }
+        finally{
+            setLoading(false)
+
+        }
 
 
     }
